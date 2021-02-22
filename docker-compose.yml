@@ -1,0 +1,117 @@
+version: '3.7'
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:${IMG_VS_TRAEFIK}
+    command:
+      #- '--log.level=DEBUG'
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+
+  whoami:
+    container_name: simple-service
+    image: traefik/whoami
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.whoami.rule=Host:whoami.localhost'
+      - 'traefik.http.routers.whoami.entrypoints=web'
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:${IMG_VS_PROMETHEUS}
+    restart: always
+    #networks:
+    #  - mon-net
+    ports:
+      - 9090:9090
+    environment:
+      - TZ=${DKR_TZ}
+      - VIRTUAL_PORT=9090
+      - VIRTUAL_PROTO=http
+    volumes:
+      - ${DKR_DATA_DIR}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ${DKR_DATA_DIR}/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-admin-api'
+      - '--web.enable-lifecycle'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.prometheus.rule=Host:prometheus.localhost'
+
+  pushgateway:
+    container_name: pushgateway
+    image: prom/pushgateway:${IMG_VS_PUSHGATEWAY}
+    restart: unless-stopped
+    ports:
+      - 9091:9091
+    #networks:
+    #  - mon-net
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.pushgateway.rule=Host:pushgateway.localhost'
+
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager:${IMG_VS_ALERTMANAGER}
+    restart: always
+    environment:
+      - TZ=${DKR_TZ}
+    #networks:
+    #  - mon-net
+    ports:
+      - 9093:9093
+    volumes:
+      - ${DKR_DATA_DIR}/prometheus/alertmanager.yml:/alertmanager.yml
+    command:
+      - '--config.file=/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.alertmanager.rule=Host:alertmanager.localhost'
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:${IMG_VS_GRAFANA}
+    restart: always
+    depends_on:
+      - prometheus
+    #networks:
+    #  - mon-net
+    ports:
+      - 3000:3000
+    environment:
+      - TZ=${DKR_TZ}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - VIRTUAL_PORT=3000
+      - VIRTUAL_PROTO=http
+    volumes:
+      - ${DKR_DATA_DIR}/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ${DKR_DATA_DIR}/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ${DKR_DATA_DIR}/grafana/provisioning/notifiers:/etc/grafana/provisioning/notifiers
+      - ${DKR_DATA_DIR}/grafana/provisioning/plugins:/etc/grafana/provisioning/plugins
+      - grafana_data:/var/lib/grafana
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.grafana.rule=Host:grafana.localhost'
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+#networks:
+#  mon-net:

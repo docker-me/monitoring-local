@@ -1,3 +1,10 @@
+## 
+.idea
+
+## Visual Studio Code
+.vscode
+workspace.code-workspace
+
 # Compiled class file
 *.class
 

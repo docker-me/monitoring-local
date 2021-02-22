@@ -1,0 +1,87 @@
+global:
+  scrape_interval:     5s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 10s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+  
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'ext-label-monitor'
+
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+# Rules and alerts are read from the specified file(s)
+rule_files:
+  - /etc/prometheus/alert.rules.yml
+  # - "first.rules.yml"
+  # - "second.rules.yml"
+
+
+# Configuration for the connection to our alertmanagers.
+# Prometheus will automaticly failover when there is a alertmanager offline.
+alerting:
+ alertmanagers:
+   - static_configs:
+     - targets:
+       # Alertmanager's default port is 9093
+       - alertmanager:9093
+
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['prometheus:9090']
+
+
+  - job_name: 'pushgateway'
+    static_configs:
+      - targets: ['pushgateway:9091']
+    honor_labels: true
+
+
+#  - job_name: node
+#    scrape_interval: 15s
+#    static_configs:
+#      - targets: ['node-exporter:9100']
+      
+#  - job_name: 'docker'
+#         # metrics_path defaults to '/metrics'
+#         # scheme defaults to 'http'.
+#    static_configs:
+#      - targets: ['172.17.0.1:9323']
+      
+      
+  - job_name: 'grafana'
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+    static_configs:
+      - targets: ['grafana:3000']
+      
+      
+#  - job_name: 'app-local'
+#    # metrics_path defaults to '/metrics'
+#    # scheme defaults to 'http'.
+#    static_configs:
+#      - targets: ['mssql-exporter:4000']
+      
+      
+#  - job_name: 'app-local'
+#    scrape_interval: 1m
+#    file_sd_configs:
+#      - files:
+#        - /path/into/the/container/prometheus/targets_app-local.yml
+#        refresh_interval: 5m
+#    relabel_configs:
+#    - target_label: target_label_app_local
+#      replacement: 'app_local'
+#    metric_relabel_configs:
+#      - source_labels: [__name__]
+#        regex: app_(.*)
+#        action: keep
+      
+     

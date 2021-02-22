@@ -1,0 +1,38 @@
+# https://grafana.com/docs/grafana/latest/administration/provisioning/#datasources
+
+# config file version
+apiVersion: 1
+
+# list of datasources to insert/update depending
+# what's available in the database
+datasources:
+  - name: Prometheus
+    type: prometheus
+
+    # Access mode - proxy (server in the UI) or direct (browser in the UI).
+    access: proxy
+
+    # <int> org id. will default to orgId 1 if not specified
+    orgId: 1
+
+    # <string> custom UID which can be used to reference this datasource in other parts of the configuration, if not specified will be generated automatically
+    uid: prometheus_uid_1
+
+    # <string> url
+    url: http://prometheus:9090
+
+    # <bool> mark as default datasource. Max one per org
+    isDefault: true
+
+    # <map> fields that will be converted to json and stored in jsonData
+    jsonData:
+      exemplarTraceIdDestinations:
+        # Field with internal link pointing to data source in Grafana.
+        # datasourceUid value can be anything, but it should be unique across all defined data source uids.
+        - datasourceUid: my_jaeger_uid
+          name: traceID
+
+        # Field with external link.
+        - name: traceID
+          url: 'http://grafana.localhost:3000/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22Jaeger%22,%7B%22query%22:%22$${__value.raw}%22%7D%5D'
+
