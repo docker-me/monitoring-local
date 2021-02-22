@@ -87,10 +87,10 @@ Below are the used urls between the container:
 * http://grafana:3000
 ### Extern
 We can open the application im browser with following URLs:
-* http://prometheus.localhost:9090
-* http://pushgateway.localhost:9091
-* http://alertmanager.localhost:9093
-* http://grafana.localhost:3000  
+* http://prometheus.localhost
+* http://pushgateway.localhost
+* http://alertmanager.localhost
+* http://grafana.localhost 
 traefik creates this urls.
 
 ### traefik
@@ -117,7 +117,10 @@ Explicitly tell Traefik to expose this container
 * `traefik.enable=true`  
 
 The domain the service will respond to  
-* `traefik.http.routers.<container_name>.rule=Host:<container_name>.localhost`  
+* ``traefik.http.routers.<container_name>.rule=Host(`<container_name>.localhost`)``  
+
+The port of the container (external)
+* `traefik.port=<container_port>`
 
 Allow request only from the predefined entry point named "web"  
 * `traefik.http.routers.whoami.entrypoints=web`  
