@@ -120,5 +120,5 @@ volumes:
 networks:
 #  mon-net:
   default:
-    external: true
+    external: false
     name: traefik-net
