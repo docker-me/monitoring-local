@@ -90,8 +90,8 @@ We can open the application im browser with following URLs:
 * http://prometheus.localhost
 * http://pushgateway.localhost
 * http://alertmanager.localhost
-* http://grafana.localhost 
-traefik creates this urls.
+* http://grafana.localhost   
+This URLs are created from traefik.
 
 ### traefik
 #### commands by start
