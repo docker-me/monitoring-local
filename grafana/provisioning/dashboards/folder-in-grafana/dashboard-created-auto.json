@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -34,7 +34,7 @@
     },
     {
       "datasource": null,
-      "description": "",
+      "description": "process_cpu_seconds_total   \nSUM notify+scrape",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -78,13 +78,13 @@
         {
           "expr": "sum(prometheus_sd_received_updates_total{instance=\"prometheus:9090\",job=\"prometheus\"})",
           "interval": "",
-          "legendFormat": "sume: notify+scrape",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "SUM: notify+scrape",
+      "title": "process_cpu_seconds_total",
       "type": "gauge"
     },
     {
@@ -93,7 +93,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "description": "prometheus_sd_received_updates_total",
+      "description": "HELP go_memstats_alloc_bytes Number of bytes allocated and still in use.   \nTYPE go_memstats_alloc_bytes gauge",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -136,24 +136,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "prometheus_sd_received_updates_total{instance=\"prometheus:9090\",job=\"prometheus\",name=\"notify\"}",
+          "expr": "go_memstats_alloc_bytes",
           "instant": false,
           "interval": "",
-          "legendFormat": "notify",
+          "legendFormat": "{{job}}",
           "refId": "A"
-        },
-        {
-          "expr": "prometheus_sd_received_updates_total{instance=\"prometheus:9090\",job=\"prometheus\",name=\"scrape\"}",
-          "interval": "",
-          "legendFormat": "scrape",
-          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "prometheus received_updates_total",
+      "title": "go_memstats_alloc_bytes",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -205,5 +199,5 @@
   "timezone": "",
   "title": "Dashboard Created Auto",
   "uid": "0rmk1OyMz",
-  "version": 5
+  "version": 1
 }

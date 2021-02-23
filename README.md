@@ -134,6 +134,9 @@ Allow request only from the predefined entry point named "web"
 * `./prometheus/alert.rules.yml`  
 
 #### commands by start
+One of: `debug`, `info`, `warn`, `error`. Only prints messages with levels higher than that.
+* `--log.level=info`
+
 To specify which configuration file to load  
 * `--config.file`  
 
@@ -157,6 +160,16 @@ Prometheus can reload its configuration at runtime. If the new configuration is 
 
 ### pushgateway
 * https://github.com/prometheus/pushgateway
+
+One of: `debug`, `info`, `warn`, `error`. Only prints messages with levels higher than that.
+* `--log.level=info`
+
+If specified then enables the Admin API. It lets you perform certain destructive actions. More on that in the following sections.
+* `--web.enable-admin-api`
+
+If specified then lets you shutdown the Pushgateway via the API.
+* `--web.enable-lifecycle`
+
 #### example to PUSH data
 Push a single sample into the group identified by `{job="some_job"}`.
 Since no type information has been provided, `some_metric` will be of type untyped.
