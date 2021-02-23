@@ -115,7 +115,9 @@ services:
 
 volumes:
   prometheus_data:
+    external: false
   grafana_data:
+    external: false
 
 networks:
 #  mon-net:
