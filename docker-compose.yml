@@ -56,6 +56,7 @@ services:
       - ${DKR_DATA_DIR}/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
       - prometheus_data:/prometheus
     command:
+      - '--log.level=info'
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
@@ -78,6 +79,10 @@ services:
     #  - 9091:9091
     #networks:
     #  - mon-net
+    command:
+      - '--log.level=info'
+      - '--web.enable-admin-api'
+      - '--web.enable-lifecycle'
     labels:
       - traefik.enable=true
       - traefik.http.routers.pushgateway.rule=Host(`pushgateway.localhost`)
