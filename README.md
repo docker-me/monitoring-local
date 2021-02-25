@@ -73,6 +73,7 @@ OpenSSL version: OpenSSL 1.1.0l  10 Sep 2019
 
 ## Components
 * traefik
+* cadvisor
 * prometheus
 * pushgateway
 * alertmanager
@@ -81,12 +82,14 @@ OpenSSL version: OpenSSL 1.1.0l  10 Sep 2019
 ## URLs
 ### Intern
 Below are the used urls between the container:
+* http://cadvisor:8081
 * http://prometheus:9090
 * http://pushgateway:9091
 * http://alertmanager:9093
 * http://grafana:3000
 ### Extern
 We can open the application im browser with following URLs:
+* http://cadvisor.localhost
 * http://prometheus.localhost
 * http://pushgateway.localhost
 * http://alertmanager.localhost
@@ -125,6 +128,10 @@ The port of the container (external)
 Allow request only from the predefined entry point named "web"  
 * `traefik.http.routers.whoami.entrypoints=web`  
 
+### cadvisor
+* https://prometheus.io/docs/guides/cadvisor/
+* https://github.com/google/cadvisor
+* https://hub.docker.com/r/google/cadvisor/
 
 ### prometheus
 #### config file
@@ -174,13 +181,13 @@ If specified then lets you shutdown the Pushgateway via the API.
 Push a single sample into the group identified by `{job="some_job"}`.
 Since no type information has been provided, `some_metric` will be of type untyped.
 ```
-echo "some_metric 3.14" | curl --data-binary @- http://pushgateway.localhost:9091/metrics/job/some_job
+echo "some_metric 3.14" | curl --data-binary @- http://pushgateway.localhost/metrics/job/some_job
 ```
 
 Push something more complex into the group identified by `{job="some_job",instance="some_instance"}`.
 Note how type information and help strings are provided. Those lines are optional, but strongly encouraged for anything more complex.
 ```
-cat <<EOF | curl --data-binary @- http://pushgateway.localhost:9091/metrics/job/some_job/instance/some_instance
+cat <<EOF | curl --data-binary @- http://pushgateway.localhost/metrics/job/some_job/instance/some_instance
 # TYPE some_metric counter
 some_metric{label="val1"} 42
 # TYPE another_metric gauge

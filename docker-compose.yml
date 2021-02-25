@@ -4,34 +4,36 @@ services:
   traefik:
     container_name: traefik
     image: traefik:${IMG_VS_TRAEFIK}
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
     command:
       #- '--log.level=DEBUG'
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
-      - '--entrypoints.web.address=:80'
     ports:
       - 80:80
       - 8080:8080
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
 
-  whoami:
-    container_name: simple-service
-    image: traefik/whoami
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:${IMG_VS_CADVISOR}
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
     labels:
       - traefik.enable=true
-      - traefik.http.routers.whoami.rule=Host(`whoami.localhost`)
-      - traefik.http.routers.whoami.entrypoints=web
+      - traefik.http.routers.cadvisor.rule=Host(`cadvisor.localhost`)
+      - traefik.port=8081
 
   prometheus:
     container_name: prometheus
     image: prom/prometheus:${IMG_VS_PROMETHEUS}
+    depends_on:
+      - cadvisor
     restart: always
-    #ports:
-    #  - 9090:9090
-    #networks:
-    #  - mon-net
     environment:
       - TZ=${DKR_TZ}
       - VIRTUAL_PORT=9090
@@ -41,7 +43,6 @@ services:
       - ${DKR_DATA_DIR}/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
       - prometheus_data:/prometheus
     command:
-      - '--log.level=info'
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
@@ -57,15 +58,9 @@ services:
   pushgateway:
     container_name: pushgateway
     image: prom/pushgateway:${IMG_VS_PUSHGATEWAY}
+    depends_on:
+      - cadvisor
     restart: unless-stopped
-    #ports:
-    #  - 9091:9091
-    #networks:
-    #  - mon-net
-    command:
-      - '--log.level=info'
-      - '--web.enable-admin-api'
-      - '--web.enable-lifecycle'
     labels:
       - traefik.enable=true
       - traefik.http.routers.pushgateway.rule=Host(`pushgateway.localhost`)
@@ -74,13 +69,11 @@ services:
   alertmanager:
     container_name: alertmanager
     image: prom/alertmanager:${IMG_VS_ALERTMANAGER}
+    depends_on:
+      - cadvisor
     restart: always
     environment:
       - TZ=${DKR_TZ}
-    #ports:
-    #  - 9093:9093
-    #networks:
-    #  - mon-net
     volumes:
       - ${DKR_DATA_DIR}/prometheus/alertmanager.yml:/alertmanager.yml
     command:
@@ -96,11 +89,8 @@ services:
     image: grafana/grafana:${IMG_VS_GRAFANA}
     restart: always
     depends_on:
+      - cadvisor
       - prometheus
-    #ports:
-    #  - 3000:3000
-    #networks:
-    #  - mon-net
     environment:
       - TZ=${DKR_TZ}
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
@@ -125,7 +115,6 @@ volumes:
     external: false
 
 networks:
-#  mon-net:
   default:
     external: false
     name: traefik-net

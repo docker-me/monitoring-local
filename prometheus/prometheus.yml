@@ -37,39 +37,39 @@ scrape_configs:
     static_configs:
       - targets: ['prometheus:9090']
 
-
   - job_name: 'pushgateway'
     static_configs:
       - targets: ['pushgateway:9091']
     honor_labels: true
 
-
-#  - job_name: node
-#    scrape_interval: 15s
-#    static_configs:
-#      - targets: ['node-exporter:9100']
-      
-#  - job_name: 'docker'
-#         # metrics_path defaults to '/metrics'
-#         # scheme defaults to 'http'.
-#    static_configs:
-#      - targets: ['172.17.0.1:9323']
-      
-      
   - job_name: 'grafana'
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
     static_configs:
       - targets: ['grafana:3000']
-      
-      
+
+  - job_name: 'cadvisor'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['cadvisor:8081']
+
+#  - job_name: node
+#    scrape_interval: 15s
+#    static_configs:
+#      - targets: ['node-exporter:9100']
+
+#  - job_name: 'docker'
+#         # metrics_path defaults to '/metrics'
+#         # scheme defaults to 'http'.
+#    static_configs:
+#      - targets: ['172.17.0.1:9323']
+
 #  - job_name: 'app-local'
 #    # metrics_path defaults to '/metrics'
 #    # scheme defaults to 'http'.
 #    static_configs:
 #      - targets: ['mssql-exporter:4000']
-      
-      
+
 #  - job_name: 'app-local'
 #    scrape_interval: 1m
 #    file_sd_configs:
@@ -83,5 +83,3 @@ scrape_configs:
 #      - source_labels: [__name__]
 #        regex: app_(.*)
 #        action: keep
-      
-     
