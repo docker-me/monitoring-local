@@ -11,9 +11,18 @@ services:
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
     ports:
       - 80:80
       - 8080:8080
+
+  whoami:
+    container_name: simple-service
+    image: traefik/whoami
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.rule=Host(`whoami.localhost`)
+      - traefik.http.routers.whoami.entrypoints=web
 
   cadvisor:
     container_name: cadvisor
@@ -31,9 +40,13 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:${IMG_VS_PROMETHEUS}
+    restart: always
     depends_on:
       - cadvisor
-    restart: always
+    #ports:
+    #  - 9090:9090
+    #networks:
+    #  - mon-net
     environment:
       - TZ=${DKR_TZ}
       - VIRTUAL_PORT=9090
@@ -58,9 +71,13 @@ services:
   pushgateway:
     container_name: pushgateway
     image: prom/pushgateway:${IMG_VS_PUSHGATEWAY}
+    restart: unless-stopped
     depends_on:
       - cadvisor
-    restart: unless-stopped
+    #ports:
+    #  - 9091:9091
+    #networks:
+    #  - mon-net
     labels:
       - traefik.enable=true
       - traefik.http.routers.pushgateway.rule=Host(`pushgateway.localhost`)
@@ -69,9 +86,13 @@ services:
   alertmanager:
     container_name: alertmanager
     image: prom/alertmanager:${IMG_VS_ALERTMANAGER}
+    restart: always
     depends_on:
       - cadvisor
-    restart: always
+    #ports:
+    #  - 9093:9093
+    #networks:
+    #  - mon-net
     environment:
       - TZ=${DKR_TZ}
     volumes:
@@ -91,6 +112,10 @@ services:
     depends_on:
       - cadvisor
       - prometheus
+    #ports:
+    #  - 3000:3000
+    #networks:
+    #  - mon-net
     environment:
       - TZ=${DKR_TZ}
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
@@ -115,6 +140,7 @@ volumes:
     external: false
 
 networks:
+#  mon-net:
   default:
     external: false
     name: traefik-net
