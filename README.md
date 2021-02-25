@@ -82,7 +82,7 @@ OpenSSL version: OpenSSL 1.1.0l  10 Sep 2019
 ## URLs
 ### Intern
 Below are the used urls between the container:
-* http://cadvisor:8081
+* http://cadvisor:8080
 * http://prometheus:9090
 * http://pushgateway:9091
 * http://alertmanager:9093
