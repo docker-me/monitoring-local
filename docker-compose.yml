@@ -7,14 +7,21 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     command:
-      #- '--log.level=DEBUG'
+      - '--log.level=DEBUG'
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
       - '--entrypoints.web.address=:80'
+      - '--entrypoints.ssh.address=:2222'
+      - '--metrics.prometheus=true'
+      - '--metrics.prometheus.addEntryPointsLabels=true'
+      - '--entryPoints.metrics.address=:8082'
+      - '--metrics.prometheus.entryPoint=metrics'
     ports:
+      - 2222:2222
       - 80:80
       - 8080:8080
+      - 5432:5432
 
   whoami:
     container_name: simple-service
