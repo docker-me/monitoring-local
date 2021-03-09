@@ -79,15 +79,15 @@ OpenSSL version: OpenSSL 1.1.0l  10 Sep 2019
 * alertmanager
 * grafana
 
-## URLs
-### Intern
+### URLs
+#### Intern
 Below are the used urls between the container:
 * http://cadvisor:8080
 * http://prometheus:9090
 * http://pushgateway:9091
 * http://alertmanager:9093
 * http://grafana:3000
-### Extern
+#### Extern
 We can open the application im browser with following URLs:
 * http://cadvisor.localhost
 * http://prometheus.localhost
@@ -96,8 +96,8 @@ We can open the application im browser with following URLs:
 * http://grafana.localhost   
 This URLs are created from traefik.
 
-### traefik
-#### commands by start
+## traefik
+### commands by start
 By default, the level is set to ERROR. Alternative logging levels are   
 DEBUG, PANIC, FATAL, ERROR, WARN, and INFO.  
 * `--log.level=DEBUG`  
@@ -115,7 +115,7 @@ The list of middlewares that are prepended by default to the list of middlewares
 * `--entrypoints.web.address=:80`  
 
 
-#### by the container (labels:)
+### by the container (labels:)
 Explicitly tell Traefik to expose this container  
 * `traefik.enable=true`  
 
@@ -128,19 +128,19 @@ The port of the container (external)
 Allow request only from the predefined entry point named "web"  
 * `traefik.http.routers.whoami.entrypoints=web`  
 
-### cadvisor
+## cadvisor
 * https://prometheus.io/docs/guides/cadvisor/
 * https://github.com/google/cadvisor
 * https://hub.docker.com/r/google/cadvisor/
 
-### prometheus
-#### config file
+## prometheus
+### config file
 * `./prometheus/prometheus.yml`  
 
-#### alert rules file
+### alert rules file
 * `./prometheus/alert.rules.yml`  
 
-#### commands by start
+### commands by start
 One of: `debug`, `info`, `warn`, `error`. Only prints messages with levels higher than that.
 * `--log.level=info`
 
@@ -165,7 +165,7 @@ The following flag controls access to the administrative HTTP API, which include
 Prometheus can reload its configuration at runtime. If the new configuration is not well-formed, the changes will not be applied. A configuration reload is triggered by sending a SIGHUP to the Prometheus process or sending a `HTTP POST` request to the `/-/reload` endpoint (when the following flag is enabled). This will also reload any configured rule files.  
 * `--web.enable-lifecycle`
 
-### pushgateway
+## pushgateway
 * https://github.com/prometheus/pushgateway
 
 One of: `debug`, `info`, `warn`, `error`. Only prints messages with levels higher than that.
@@ -177,7 +177,7 @@ If specified then enables the Admin API. It lets you perform certain destructive
 If specified then lets you shutdown the Pushgateway via the API.
 * `--web.enable-lifecycle`
 
-#### example to PUSH data
+### example to PUSH data
 Push a single sample into the group identified by `{job="some_job"}`.
 Since no type information has been provided, `some_metric` will be of type untyped.
 ```
@@ -200,19 +200,49 @@ ERROR
 pushed metrics are invalid or inconsistent with existing metrics: collected metric "some_metric" { label:<name:"instance" value:"some_instance" > label:<name:"job" value:"some_job" > label:<name:"label" value:"val1" > counter:<value:42 > } is not a UNTYPED
 ```
 
-### alertmanager
-#### config file
+## alertmanager
+### config file
 * `./prometheus/alertmanager.yml`
 
-#### commands by start
+### commands by start
 * `--config.file`  
 * `--storage.path`  
 
 
-### grafana
-#### environmets
+## grafana
+### environmets
 Password and User to use Grafana as administrator
 * GF_SECURITY_ADMIN_USER  
 * GF_SECURITY_ADMIN_PASSWORD  
 
+## exporter
+### blackbox
+* https://github.com/prometheus/blackbox_exporter
+* https://hub.docker.com/r/prom/blackbox-exporter
+* https://github.com/prometheus/blackbox_exporter/blob/master/example.yml
+
+Blackbox Exporter by Prometheus is used to probe endpoints like HTTPS, HTTP, TCP, DNS, and ICMP. After you define the endpoint, the Blackbox exporter generates hundreds of metrics that can be visualized using Grafana. Measuring response time is the most important feature of the Blackbox exporter.
+
+Blackbox Exporter is a self-hosted solution. If you’re looking for something similar, but as SaaS or cloud-based, then you can try Grafana worldPing.
+
+Blackbox exporter configuration file.
+* --config.file="blackbox.yml"
+
+The address to listen on for HTTP requests.
+* --web.listen-address=":9115"
+
+If true validate the config file and then exit.
+* --config.check=true
+
+Only log messages with the given severity or above. One of: [debug, info, warn, error]
+* --log.level=info
+
+Output format of log messages. One of: [logfmt, json]
+* --log.format=logfmt 
+
+#### httpd
+* https://hub.docker.com/_/httpd
+
+#### ngix
+* https://hub.docker.com/_/nginx
 

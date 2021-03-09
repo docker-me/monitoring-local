@@ -145,6 +145,56 @@ services:
       - traefik.http.routers.grafana.rule=Host(`grafana.localhost`)
       - traefik.port=3000
 
+  blackbox:
+    container_name: blackbox
+    image: prom/blackbox-exporter:${IMG_VS_BLACKBOX}
+    restart: always
+    depends_on:
+      - cadvisor
+      - prometheus
+      - grafana
+    #ports:
+    #  - 9115:9115
+    #networks:
+    #  - mon-net
+    environment:
+      - TZ=${DKR_TZ}
+    volumes:
+      - ${DKR_DATA_DIR}/exporter/blackbox:/config
+    command:
+      - '--log.level=debug'
+      - '--config.file=/config/blackbox.yml'
+#      - '--web.listen-address=":9115"'
+#      - '--config.check'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.blackbox.rule=Host(`blackbox.localhost`)
+      - traefik.port=9115
+
+  web-httpd:
+    container_name: web-httpd
+    image: httpd:${IMG_VS_WEB_HTTPD}
+    #ports:
+    #  - 5000:80
+    #networks:
+    #  - mon-net
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web-httpd.rule=Host(`web-httpd.localhost`)
+      - traefik.port=80
+
+  web-nginx:
+    container_name: web-nginx
+    image: nginx:${IMG_VS_WEB_NGINX}
+    #ports:
+    #  - 5001:80
+    #networks:
+    #  - mon-net
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web-nginx.rule=Host(`web-nginx.localhost`)
+      - traefik.port=80
+
 volumes:
   prometheus_data:
     external: false
