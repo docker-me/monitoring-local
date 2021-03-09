@@ -220,6 +220,7 @@ Password and User to use Grafana as administrator
 * https://github.com/prometheus/blackbox_exporter
 * https://hub.docker.com/r/prom/blackbox-exporter
 * https://github.com/prometheus/blackbox_exporter/blob/master/example.yml
+* https://www.sethryder.com/blackbox-exporter-accessing-multiple-modules-and-targets-with-a-single-job/
 
 Blackbox Exporter by Prometheus is used to probe endpoints like HTTPS, HTTP, TCP, DNS, and ICMP. After you define the endpoint, the Blackbox exporter generates hundreds of metrics that can be visualized using Grafana. Measuring response time is the most important feature of the Blackbox exporter.
 

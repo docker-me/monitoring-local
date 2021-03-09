@@ -58,39 +58,80 @@ scrape_configs:
     static_configs:
       - targets: ['traefik:8082']
 
+  # Blackbox Exporter
   - job_name: 'blackbox'
+    scrape_interval: 5s
     metrics_path: /probe
-    params:
-      module: [http_2xx]  # Look for a HTTP 200 response.
-    static_configs:
-      - targets:
-          - http://blackbox.localhost
-          - http://blackbox:9115
+    file_sd_configs:
+      - files:
+          - '/etc/prometheus/targets/blackbox/*.yml'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [module]
+        target_label: __param_module
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115 # The blackbox exporter
+  # End Blackbox Exporter
+
+
+#  - job_name: 'blackbox'
+#    metrics_path: /probe
+#    file_sd_configs:
+#      - files:
+#          - '/etc/prometheus/targets/blackbox/*.yml'
+#    relabel_configs:
+#      - source_labels: [__address__]
+#        separator: ;
+#        regex: (.*)
+#        target_label: __param_target
+#        replacement: $1
+#        action: replace
+#      - source_labels: [__param_target]
+#        separator: ;
+#        regex: (.*)
+#        target_label: instance
+#        replacement: $1
+#        action: replace
+#      - target_label: __address__
+#        replacement: blackbox:9115 # The blackbox exporter
+#        action: replace
+
+#  - job_name: 'blackbox'
+#    metrics_path: /probe
+#    params:
+#      module: [http_2xx]  # Look for a HTTP 200 response.
+#    static_configs:
+#      - targets:
+#          - http://blackbox.localhost
+#          - http://blackbox:9115
 #          - http://prometheus.io    # Target to probe with http.
 #          - https://prometheus.io   # Target to probe with https.
 #          - http://example.com:8080 # Target to probe with http on port 8080.
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: blackbox:9115  # The blackbox exporter's real hostname:port.
+#    relabel_configs:
+#      - source_labels: [__address__]
+#        target_label: __param_target
+#      - source_labels: [__param_target]
+#        target_label: instance
+#      - target_label: __address__
+#        replacement: blackbox:9115  # The blackbox exporter's real hostname:port.
 
-  - job_name: 'httpd'
-    metrics_path: /probe
-    params:
-      module: [http_2xx]
-    static_configs:
-      - targets:
-          - http://httpd:80
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: blackbox:9115
+#  - job_name: 'httpd'
+#    metrics_path: /probe
+#    params:
+#      module: [http_2xx]
+#    static_configs:
+#      - targets:
+#          - http://httpd:80
+#    relabel_configs:
+#      - source_labels: [__address__]
+#        target_label: __param_target
+#      - source_labels: [__param_target]
+#        target_label: instance
+#      - target_label: __address__
+#        replacement: blackbox:9115
 
 #  - job_name: node
 #    scrape_interval: 15s

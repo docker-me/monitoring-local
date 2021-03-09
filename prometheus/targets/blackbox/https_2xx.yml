@@ -1,0 +1,5 @@
+- labels:
+    module: https_2xx
+  targets:
+    - https://www.sethryder.com
+    - https://www.modpackindex.com

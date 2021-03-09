@@ -61,6 +61,7 @@ services:
     volumes:
       - ${DKR_DATA_DIR}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ${DKR_DATA_DIR}/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
+      - ${DKR_DATA_DIR}/prometheus/targets:/etc/prometheus/targets
       - prometheus_data:/prometheus
     command:
       - '--log.level=info'
