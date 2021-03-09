@@ -87,13 +87,21 @@ Below are the used urls between the container:
 * http://pushgateway:9091
 * http://alertmanager:9093
 * http://grafana:3000
+* http://blackbox:9115
+* http://web-httpd:80
+* http://web-nginx:80
+
 #### Extern
 We can open the application im browser with following URLs:
 * http://cadvisor.localhost
 * http://prometheus.localhost
 * http://pushgateway.localhost
 * http://alertmanager.localhost
-* http://grafana.localhost   
+* http://grafana.localhost 
+* http://blackbox.localhost
+* http://web-httpd.localhost
+* http://web-nginx.localhost
+
 This URLs are created from traefik.
 
 ## traefik

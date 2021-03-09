@@ -1,5 +1,7 @@
 - labels:
     module: https_2xx
   targets:
+    - https://web-httpd.localhost
+    - https://web-nginx.localhost
     - https://www.sethryder.com
     - https://www.modpackindex.com

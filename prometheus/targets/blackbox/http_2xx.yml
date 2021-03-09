@@ -1,4 +1,6 @@
 - labels:
     module: http_2xx
   targets:
-    - http://www.stealmylogin.com/
+    - http://web-httpd.localhost
+    - http://web-nginx.localhost
+    - http://www.stealmylogin.com
